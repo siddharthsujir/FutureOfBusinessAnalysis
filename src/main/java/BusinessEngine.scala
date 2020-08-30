@@ -1,3 +1,4 @@
+import SamplePractice.Practice
 import executors.SurveyAnalysis
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
@@ -17,7 +18,8 @@ object BusinessEngine extends App {
       .config(conf)
       .getOrCreate();
 
-    SurveyAnalysis.execution(sparkSession);
+   // SurveyAnalysis.execution(sparkSession);
+   Practice.wordCount(sparkSession)
   }
 
 }
