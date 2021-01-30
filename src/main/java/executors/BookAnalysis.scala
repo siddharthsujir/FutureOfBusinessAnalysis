@@ -3,8 +3,8 @@ package executors
 import caseclass.BookRating
 import org.apache.spark
 import org.apache.spark.sql.expressions.Window
-import org.apache.spark.sql.{Dataset, SparkSession}
-import org.apache.spark.sql.functions.{rank,dense_rank,desc};
+import org.apache.spark.sql.{DataFrame, Dataset, SparkSession}
+import org.apache.spark.sql.functions.{dense_rank, desc, rank};
 
 object BookAnalysis {
 
@@ -22,10 +22,11 @@ object BookAnalysis {
 
     printRankDenseRank(bookRatingDS)
 
-
+    val s=printRankDenseRank(bookRatingDS);
+    s.write.csv("C:\\Users\\siddhu\\Documents\\output\\bookanalysis")
   }
 
-  def printRankDenseRank(ds:Dataset[BookRating]): Unit={
+  def printRankDenseRank(ds:Dataset[BookRating]): DataFrame={
 
 //    ds.sqlContext.sql("Select Name, " +
 //      "Author," +
@@ -37,9 +38,12 @@ object BookAnalysis {
 
     var w=Window.partitionBy("Genre").orderBy(desc("UserRating"))
 
+
+
     ds.withColumn("Rank_func",rank().over(w))
     .withColumn("Dense_Rank",dense_rank().over(w))
-    .show(1000);
+    //.show(1000);
+
   }
 
   def readFile(sparkSession: SparkSession): Dataset[BookRating]={
