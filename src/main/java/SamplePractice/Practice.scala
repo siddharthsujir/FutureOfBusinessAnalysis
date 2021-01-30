@@ -30,4 +30,18 @@ object Practice {
 //    rdd3.collect().foreach(print);
 
   }
+
+  def wordCount_ByLine(sparkSession: SparkSession): Unit =
+  {
+
+    var rdd=sparkSession.sparkContext.textFile("wordcount")
+    var rdd1=rdd.flatMap(s=>s.split("\n"));
+   // var rdd2=rdd1.flatMap(s=>s.split("[^A-Za-z0-9]"));
+    var rdd2=rdd1.map(s=>wordCount_perLine(s));
+    rdd2.collect().foreach(print)
+  }
+
+  def wordCount_perLine(line:String):Map[String,Int] ={
+    line.split("[^A-Za-z0-9]").map(s=>(s,1)).groupBy(_._1).mapValues(_.size)
+  }
 }

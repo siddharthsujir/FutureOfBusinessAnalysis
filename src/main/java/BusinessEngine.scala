@@ -1,5 +1,5 @@
 import SamplePractice.Practice
-import executors.SurveyAnalysis
+import executors.{BookAnalysis, SurveyAnalysis}
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
 
@@ -9,17 +9,18 @@ object BusinessEngine extends App {
 
     print("Hello! Welcome to the Future of Business survey analysis!");
 
-    var conf=new SparkConf()
-      .setMaster("local[*]")
-      .setAppName("future_of_Business")
+//    var conf=new SparkConf()
+//      .setMaster("local[*]")
+//      .setAppName("future_of_Business")
+//
+//    var sparkSession=SparkSession
+//      .builder()
+//      .config(conf)
+//      .getOrCreate();
 
-    var sparkSession=SparkSession
-      .builder()
-      .config(conf)
-      .getOrCreate();
-
-   // SurveyAnalysis.execution(sparkSession);
-   Practice.wordCount(sparkSession)
+    //SurveyAnalysis.execution(sparkSession);
+   //Practice.wordCount_ByLine(sparkSession)
+   BookAnalysis.bookAnalysis();
   }
 
 }
