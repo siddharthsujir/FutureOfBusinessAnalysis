@@ -23,11 +23,11 @@ object BookAnalysis {
 
     groupByYearCount(bookRatingDS)
 
-    // Rank and Dense Rank
-    //    printRankDenseRank(bookRatingDS)
-    //
-    //    val s=printRankDenseRank(bookRatingDS);
-    //    s.write.csv("C:\\Users\\siddhu\\Documents\\output\\bookanalysis")
+     //Rank and Dense Rank
+        printRankDenseRank(bookRatingDS)
+
+        //val s=printRankDenseRank(bookRatingDS);
+        //s.write.bucketBy(10,"year").saveAsTable("test")//.csv("C:\\Users\\siddhu\\Documents\\output\\bookanalysis")
 
 
     // Words Count with Dataset
@@ -84,9 +84,14 @@ object BookAnalysis {
 
   def groupByYearCount(ds: Dataset[BookRating]): Unit ={
 
-    ds.groupBy("Year","UserRating").count()//.filter("count>50")
-      .select("Year","UserRating","count")
-      .orderBy(col("Year"),col("UserRating").desc)
+//    ds.groupBy("Year","UserRating").count()//.filter("count>50")
+//      .select("Year","UserRating","count")
+//      .orderBy(col("Year"))//,col("UserRating").desc)
+//      .show()
+
+    ds.groupBy("Year").count()//.filter("count>50")
+      .select("Year","count")
+      .orderBy(col("Year"))//,col("UserRating").desc)
       .show()
   }
 }
