@@ -2,9 +2,10 @@ package executors
 
 import caseclass.BookRating
 import org.apache.spark
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.{DataFrame, Dataset, SparkSession}
-import org.apache.spark.sql.functions.{dense_rank, desc, rank};
+import org.apache.spark.sql.functions.{dense_rank, desc, rank,length,col,split,explode};
 
 object BookAnalysis {
 
@@ -16,14 +17,24 @@ object BookAnalysis {
       .appName("BookSellAnalysis")
       .getOrCreate()
 
-    var bookRatingDS=readFile(sparkSession);
+//    var bookRatingDS=readFile(sparkSession);
+    ////
+    ////    bookRatingDS.show(100);
+    ////
+    ////    printRankDenseRank(bookRatingDS)
+    ////
+    ////    val s=printRankDenseRank(bookRatingDS);
+    ////    s.write.csv("C:\\Users\\siddhu\\Documents\\output\\bookanalysis")
 
-    bookRatingDS.show(100);
+    val s=readFileAsText(sparkSession)
+    var wc=s.filter(length(col("value"))>0)
+      .withColumn("words",split(col("value"),"\\s+"))
+      .select(explode(col("words")) as "word")
+      .groupBy("word")
+      .count()
+      .orderBy(col("count").desc)
 
-    printRankDenseRank(bookRatingDS)
-
-    val s=printRankDenseRank(bookRatingDS);
-    s.write.csv("C:\\Users\\siddhu\\Documents\\output\\bookanalysis")
+    wc.show()
   }
 
   def printRankDenseRank(ds:Dataset[BookRating]): DataFrame={
@@ -55,5 +66,14 @@ object BookAnalysis {
       .load("C:\\Users\\siddhu\\Downloads\\bestsellers_with_categories.csv")
       .as[BookRating]
 
+  }
+
+  def readFileAsText(sparkSession: SparkSession):Dataset[String] = {
+
+    import sparkSession.sqlContext.implicits._;
+    sparkSession.read.format("text")
+      .option("header","true")
+      .load("C:\\Users\\siddhu\\Downloads\\bestsellers_with_categories.csv")
+      .as[String]
   }
 }
