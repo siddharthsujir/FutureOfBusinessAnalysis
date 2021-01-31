@@ -17,24 +17,29 @@ object BookAnalysis {
       .appName("BookSellAnalysis")
       .getOrCreate()
 
-//    var bookRatingDS=readFile(sparkSession);
-    ////
-    ////    bookRatingDS.show(100);
-    ////
-    ////    printRankDenseRank(bookRatingDS)
-    ////
-    ////    val s=printRankDenseRank(bookRatingDS);
-    ////    s.write.csv("C:\\Users\\siddhu\\Documents\\output\\bookanalysis")
+    var bookRatingDS=readFile(sparkSession);
 
-    val s=readFileAsText(sparkSession)
-    var wc=s.filter(length(col("value"))>0)
-      .withColumn("words",split(col("value"),"\\s+"))
-      .select(explode(col("words")) as "word")
-      .groupBy("word")
-      .count()
-      .orderBy(col("count").desc)
+        bookRatingDS.show(100);
 
-    wc.show()
+    groupByYearCount(bookRatingDS)
+
+    // Rank and Dense Rank
+    //    printRankDenseRank(bookRatingDS)
+    //
+    //    val s=printRankDenseRank(bookRatingDS);
+    //    s.write.csv("C:\\Users\\siddhu\\Documents\\output\\bookanalysis")
+
+
+    // Words Count with Dataset
+//    val s=readFileAsText(sparkSession)
+//    var wc=s.filter(length(col("value"))>0)
+//      .withColumn("words",split(col("value"),"\\s+"))
+//      .select(explode(col("words")) as "word")
+//      .groupBy("word")
+//      .count()
+//      .orderBy(col("count").desc)
+//
+//    wc.show()
   }
 
   def printRankDenseRank(ds:Dataset[BookRating]): DataFrame={
@@ -75,5 +80,13 @@ object BookAnalysis {
       .option("header","true")
       .load("C:\\Users\\siddhu\\Downloads\\bestsellers_with_categories.csv")
       .as[String]
+  }
+
+  def groupByYearCount(ds: Dataset[BookRating]): Unit ={
+
+    ds.groupBy("Year","UserRating").count()//.filter("count>50")
+      .select("Year","UserRating","count")
+      .orderBy(col("Year"),col("UserRating").desc)
+      .show()
   }
 }
